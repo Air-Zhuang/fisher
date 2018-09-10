@@ -1,1 +1,3 @@
 DEBUG=True
+
+SQLALCHEMY_DATABASE_URI='mysql+cymysql://root:123456@47.101.59.238:3306/fisher'
