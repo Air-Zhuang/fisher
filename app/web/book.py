@@ -31,4 +31,4 @@ def hello():
             result=YuShuBook.search_by_keyword(q)
         return jsonify(result)
     else:
-        return jsonify({'msg':'参数校验失败'})
+        return jsonify(form.errors)     #WTForms验证不通过会将错误信息放在errors属性中
