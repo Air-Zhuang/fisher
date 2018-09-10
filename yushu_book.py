@@ -2,10 +2,10 @@ from httper import HTTP
 
 
 class YuShuBook:
-    # isbn_url = 'http://t.yushu.im/v2/book/isbn/{}'
-    # keyword_url = 'http://t.yushu.im/v2/book/search?q={}&count={}&start={}'
-    isbn_url = 'http://api.douban.com/v2/book/isbn/{}'
-    keyword_url = 'http://api.douban.com/v2/book/search?q={}&count={}&start={}'
+    isbn_url = 'http://t.yushu.im/v2/book/isbn/{}'
+    keyword_url = 'http://t.yushu.im/v2/book/search?q={}&count={}&start={}'
+    # isbn_url = 'http://api.douban.com/v2/book/isbn/{}'
+    # keyword_url = 'http://api.douban.com/v2/book/search?q={}&count={}&start={}'
 
     @classmethod
     def search_by_isbn(cls, isbn):
