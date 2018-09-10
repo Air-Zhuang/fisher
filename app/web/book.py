@@ -21,14 +21,14 @@ def hello():
              isbn10 10个0到9数字组成，含有一些'-'  (旧)
     '''
     form=SearchForm(request.args)
-    if form.validate():             #SearchForm验证通过会返回True,否则返回False
+    if form.validate():                 #SearchForm验证通过会返回True,否则返回False
         q=form.q.data.strip()
         page=form.page.data
         isbn_or_key=is_isbn_or_key(q)
         if isbn_or_key=='isbn':
             result=YuShuBook.search_by_isbn(q)
         else:
-            result=YuShuBook.search_by_keyword(q)
+            result=YuShuBook.search_by_keyword(q,page)
         return jsonify(result)
     else:
         return jsonify(form.errors)     #WTForms验证不通过会将错误信息放在errors属性中
