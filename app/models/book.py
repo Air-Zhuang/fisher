@@ -1,9 +1,6 @@
 from sqlalchemy import Column
 from sqlalchemy import Integer,String
-
-from flask_sqlalchemy import SQLAlchemy
-
-db=SQLAlchemy()
+from app.models.base import db
 
 class Book(db.Model):
     id=Column(Integer,primary_key=True,autoincrement=True)
@@ -18,5 +15,5 @@ class Book(db.Model):
     summary=Column(String(1000))
     image=Column(String(50))
 
-    def sample(self):
-        pass
+    # def sample(self):
+    #     pass

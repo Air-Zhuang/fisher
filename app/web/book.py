@@ -1,6 +1,6 @@
 import json
 
-from flask import jsonify,request,render_template
+from flask import jsonify,request,render_template,flash
 
 from app.forms.book import SearchForm
 from app.libs.helper import is_isbn_or_key
@@ -10,7 +10,7 @@ from . import web
 
 
 @web.route('/book/search')
-def hello():
+def search():
     '''
         doubanapi:
             http://t.yushu.im/v2/book/search?q={}&count={}&start={}
@@ -38,14 +38,17 @@ def hello():
             yushu_book.search_by_keyword(q,page)
 
         books.fill(yushu_book,q)
-        return json.dumps(books,default=lambda o:o.__dict__,ensure_ascii=False)    #递归books下的每一个实例属性，都将其转化为dict形式
+        # return json.dumps(books,default=lambda o:o.__dict__,ensure_ascii=False)    #递归books下的每一个实例属性，都将其转化为dict形式
         # return jsonify(books.__dict__)                        #(这样不可以，因为BookCollection的books属性还是对象形式存在。)将实例属性转化为字典
     else:
-        return jsonify(form.errors)                             #WTForms验证不通过会将错误信息放在errors属性中
-@web.route('/test')
-def test():
-    r={
-        'name':'Air',
-        'age':18
-    }
-    return render_template('test.html',data=r)
+        flash('搜索的关键字不符合要求，请重新输入关键字')
+    return render_template('search_result.html', books=books)
+
+@web.route('/book/<isbn>/detail')
+def book_detail(isbn):
+    yushu_book=YuShuBook()
+    yushu_book.search_by_isbn(isbn)
+    book=BookViewModel(yushu_book.first)
+    return render_template('book_detail.html',book=book,wishes=[],gifts=[])
+
+
