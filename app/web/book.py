@@ -1,6 +1,6 @@
 import json
 
-from flask import jsonify,request
+from flask import jsonify,request,render_template
 
 from app.forms.book import SearchForm
 from app.libs.helper import is_isbn_or_key
@@ -42,3 +42,10 @@ def hello():
         # return jsonify(books.__dict__)                        #(这样不可以，因为BookCollection的books属性还是对象形式存在。)将实例属性转化为字典
     else:
         return jsonify(form.errors)                             #WTForms验证不通过会将错误信息放在errors属性中
+@web.route('/test')
+def test():
+    r={
+        'name':'Air',
+        'age':18
+    }
+    return render_template('test.html',data=r)
