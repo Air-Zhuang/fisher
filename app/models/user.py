@@ -1,8 +1,8 @@
 from sqlalchemy import Column
 from sqlalchemy import Integer,String,Float,Boolean
-from app.models.base import db
+from app.models.base import db,Base
 
-class User(db.Model):
+class User(Base):
     id = Column(Integer, primary_key=True)
     nickname = Column(String(24), nullable=False)
     phone_number = Column(String(18), unique=True)
