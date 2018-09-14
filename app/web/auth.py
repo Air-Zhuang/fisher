@@ -1,16 +1,34 @@
 from . import web
 
-from flask import render_template,request
+from app.models.base import db
+from flask import render_template,request,redirect,url_for,flash
+from app.forms.auth import RegisterForm,LoginForm
+from app.models.user import User
 
 
 @web.route('/register', methods=['GET', 'POST'])
 def register():
-    return render_template('auth/register.html',form={'data':{}})
+    form=RegisterForm(request.form)
+    if request.method=='POST' and form.validate():
+        user=User()
+        user.set_attrs(form.data)               #传入数据以字典形式
+        db.session.add(user)
+        db.session.commit()
+        redirect(url_for('web.login'))
+    return render_template('auth/register.html',form=form)
 
 
 @web.route('/login', methods=['GET', 'POST'])
 def login():
-    pass
+    form=LoginForm(request.form)
+    if request.method=='POST' and form.validate():
+        user=User.query.filter_by(email=form.email.data).first()
+        if user and:
+            pass
+        else:
+            flash()
+
+    return render_template('auth/login.html',form=form)
 
 
 @web.route('/reset/password', methods=['GET', 'POST'])
