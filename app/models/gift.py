@@ -8,4 +8,4 @@ class Gift(Base):
     user=relationship('User')
     uid=Column(Integer,ForeignKey('user.id'))
     isbn = Column(String(15), nullable=False)
-    launched=Column(Boolean,default=False)
+    launched=Column(Boolean,default=False)      #表示这本图书是否已赠送

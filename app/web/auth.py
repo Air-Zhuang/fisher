@@ -4,6 +4,7 @@ from app.models.base import db
 from flask import render_template,request,redirect,url_for,flash
 from app.forms.auth import RegisterForm,LoginForm
 from app.models.user import User
+from flask_login import login_user
 
 
 @web.route('/register', methods=['GET', 'POST'])
@@ -14,7 +15,7 @@ def register():
         user.set_attrs(form.data)               #传入数据以字典形式
         db.session.add(user)
         db.session.commit()
-        redirect(url_for('web.login'))
+        return redirect(url_for('web.login'))
     return render_template('auth/register.html',form=form)
 
 
@@ -23,10 +24,16 @@ def login():
     form=LoginForm(request.form)
     if request.method=='POST' and form.validate():
         user=User.query.filter_by(email=form.email.data).first()
-        if user and:
-            pass
+        if user and user.check_password(form.password.data):
+            # 五步：1、init文件初始化flask_login 2、model层绑定属性和装饰器 3、这里写cookie 4、在需要验证登录的控制器上加@login_required装饰器 5、从current_user中提取用户信息
+            login_user(user,remember=True)              # 将这个字段写入到cookie
+            next=request.args.get('next')               #这四行实现了如果cookie失效被flask_login重定向到主页之后再登录能够返回到重定向之前的页面
+            print(next)
+            if not next or not next.startswith('/'):    #or not next.startswith('/')实现的防止重定向攻击的功能
+                next=url_for('web.index')
+            return redirect(next)
         else:
-            flash()
+            flash("账号不存在或密码错误")
 
     return render_template('auth/login.html',form=form)
 
