@@ -1,11 +1,15 @@
 import json
 
 from flask import jsonify,request,render_template,flash
+from flask_login import current_user
 
 from app.forms.book import SearchForm
 from app.libs.helper import is_isbn_or_key
+from app.models.gift import Gift
+from app.models.wish import Wish
 from app.spider.yushu_book import YuShuBook
 from app.view_models.book import BookViewModel,BookCollection
+from app.view_models.trade import TradeInfo
 from . import web
 
 
@@ -46,9 +50,27 @@ def search():
 
 @web.route('/book/<isbn>/detail')
 def book_detail(isbn):
+    has_in_gifts=False      #当前用户是否是赠送者
+    has_in_wishes=False     #当前用户是否是索求者
+
+    #取书籍详情数据
     yushu_book=YuShuBook()
     yushu_book.search_by_isbn(isbn)
     book=BookViewModel(yushu_book.first)
-    return render_template('book_detail.html',book=book,wishes=[],gifts=[])
+
+    if current_user.is_authenticated:
+        if Gift.query.filter_by(uid=current_user.id,isbn=isbn, launched=False).first():#如果能查到，说明当前用户是赠送者
+            has_in_gifts=True
+        if Wish.query.filter_by(uid=current_user.id,isbn=isbn, launched=False).first():#如果能查到，说明当前用户是索求者
+            has_in_wishes=True
+
+    trade_gifts=Gift.query.filter_by(isbn=isbn,launched=False).all()    #查询所有赠送人的清单
+    trade_wishes=Wish.query.filter_by(isbn=isbn,launched=False).all()   #查询所有想要书的人的清单
+
+    trade_wishes_model=TradeInfo(trade_wishes)          #将从数据库提取出来的数据结构变形成可供页面识别的数据结构
+    trade_gifts_model=TradeInfo(trade_gifts)
+
+    return render_template('book_detail.html',book=book,wishes=trade_wishes_model,
+                           gifts=trade_gifts_model,has_in_gifts=has_in_gifts,has_in_wishes=has_in_wishes)
 
 

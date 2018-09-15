@@ -1,33 +1,42 @@
-
+from app.view_models.gift import MyGifts
+from app.view_models.trade import MyTrades
 from . import web
 from flask_login import login_required,current_user
 from app.models.gift import Gift
 from app.models.base import db
-from flask import current_app,flash
+from flask import current_app,flash,redirect,url_for,render_template
 
 @web.route('/my/gifts')
 @login_required
 def my_gifts():
-    return 'My Gifts'
+    uid=current_user.id
+    gifts_of_mine=Gift.get_user_gifts(uid)  #取我所有礼物的记录
+    isbn_list=[gift.isbn for gift in gifts_of_mine]
+    wish_count_list=Gift.get_wish_counts(isbn_list)
+    view_model=MyTrades(gifts_of_mine,wish_count_list)
+    return render_template('my_gifts.html',gifts=view_model.trades)
+
 
 
 @web.route('/gifts/book/<isbn>')
 @login_required
 def save_to_gifts(isbn):
     if current_user.can_save_to_list(isbn):
-        try:    #数据库事务rollback
+        # try:    #数据库事务rollback
+        with db.auto_commit():
             gift=Gift()                                                         #操作gift表
             gift.isbn=isbn
             gift.uid=current_user.id    #直接通过flask_login的current_user方法中提取用户id
 
             current_user.beans+=current_app.config['BEANS_UPLOAD_ONE_BOOK']     #操作user表
             db.session.add(gift)
-            db.session.commit()
-        except Exception as e:
-            db.session.rollback()
-            raise e
+            # db.session.commit()
+        # except Exception as e:
+        #     db.session.rollback()
+        #     raise e
     else:
         flash('这本书已添加至你的赠送清单或已存在于你的心愿清单，请不要重复添加')
+    return redirect(url_for('web.book_detail', isbn=isbn))
 
 @web.route('/gifts/<gid>/redraw')
 def redraw_from_gifts(gid):

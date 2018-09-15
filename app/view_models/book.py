@@ -1,3 +1,4 @@
+'''view_models相当于组建一个json返回字符串，只不过这个返回字符串是以对象的形式存在'''
 class BookViewModel:
     def __init__(self,book):
         self.title=book['title']
@@ -8,6 +9,8 @@ class BookViewModel:
         self.summary=book['summary']
         self.isbn=book['isbn']
         self.pages=book['pages']
+        self.pubdate=book['pubdate']
+        self.binding=book['binding']
     @property           #用属性的方式访问intro
     def intro(self):
         intros=filter(lambda x:True if x else False,[self.author,self.publisher,self.price])

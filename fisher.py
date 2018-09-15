@@ -11,4 +11,5 @@ if __name__ == '__main__':
     http://t.yushu.im/v2/book/isbn/9787501524044
     http://127.0.0.1:5000/book/search/9787501524044/1
     http://127.0.0.1:5000/book/search?q=9787501524044&page=1
+    http://127.0.0.1:5000/book/9787501524044/detail
     '''
