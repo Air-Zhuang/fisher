@@ -16,6 +16,9 @@ class Gift(Base):
     isbn = Column(String(15), nullable=False)
     launched=Column(Boolean,default=False)      #表示这本图书是否已赠送
 
+    def is_yourself_gift(self,uid):             #鱼漂业务逻辑，自己不能给自己赠送
+        return True if self.uid==uid else False
+
     @classmethod
     def get_user_gifts(cls,uid):    #获取当前用户的gift
         gifts=Gift.query.filter_by(uid=uid,launched=False).order_by(

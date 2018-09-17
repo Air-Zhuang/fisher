@@ -1,14 +1,19 @@
 from sqlalchemy import Column
 from sqlalchemy import Integer,String,Float,Boolean
+
+from app.libs.enums import PendingStatus
 from app.models.base import db,Base
 
 from werkzeug.security import generate_password_hash,check_password_hash
 from flask_login import UserMixin
 from app import login_manager
 from app.libs.helper import is_isbn_or_key
+from app.models.drift import Drift
 from app.spider.yushu_book import YuShuBook
 from app.models.gift import Gift
 from app.models.wish import Wish
+
+from math import floor
 
 class User(UserMixin,Base):
     id = Column(Integer, primary_key=True)
@@ -30,6 +35,17 @@ class User(UserMixin,Base):
     def password(self,raw):
         self._password=generate_password_hash(raw)
 
+    def can_send_drift(self):
+        '''
+        鱼豆必须足够(大于等于1)
+        每索取两本书，自己必须送出一本书
+        '''
+        if self.beans<1:
+            return False
+        success_gifts_count=Gift.query.filter_by(uid=self.id,launched=True).count()
+        success_receive_count=Drift.query.filter_by(requester_id=self.id,pending=PendingStatus.Success).count()
+        return True if floor(success_receive_count/2)<=floor(success_gifts_count) else False
+
     def check_password(self,raw):       #完成login页面用户输入的明文密码和数据库的加密密码的比对
         return check_password_hash(self._password,raw)
 
@@ -50,6 +66,15 @@ class User(UserMixin,Base):
             return True
         else:
             return False
+
+    @property               #--->drift.send_drift
+    def summary(self):
+        return dict(
+            nickname=self.nickname,
+            beans=self.beans,
+            email=self.email,
+            send_receive=str(self.send_counter)+'/'+str(self.receive_counter)
+        )
 
     def get_id(self):   #flask_login需要在model层返回一个标志id的函数，函数名固定
         return self.id

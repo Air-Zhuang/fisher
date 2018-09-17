@@ -1,4 +1,6 @@
 '''view_models相当于组建一个json返回字符串，只不过这个返回字符串是以对象的形式存在'''
+'''drift返回[]+{},可重点参考'''
+'''不使用这种view model,可以参考user.summary'''
 class BookViewModel:
     def __init__(self,book):
         self.title=book['title']

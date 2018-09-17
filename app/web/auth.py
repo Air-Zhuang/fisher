@@ -2,7 +2,7 @@ from . import web
 
 from app.models.base import db
 from flask import render_template,request,redirect,url_for,flash
-from app.forms.auth import RegisterForm,LoginForm
+from app.forms.auth import RegisterForm,LoginForm,EmailForm
 from app.models.user import User
 from flask_login import login_user, logout_user
 
@@ -41,7 +41,12 @@ def login():
 
 @web.route('/reset/password', methods=['GET', 'POST'])
 def forget_password_request():
-    pass
+    form = EmailForm(request.form)
+    if request.method=='POST':
+        if form.validate():             #真正让消息闪现的是这句话form.validate()
+            account_email=form.email.data
+            user=User.query.filter_by(email=account_email).first_or_404()   #从数据库查询用户消息。返回第一个结果，如果没有抛出404异常，跳到404页面
+    return render_template('auth/forget_password_request.html',form=form)
 
 
 @web.route('/reset/password/<token>', methods=['GET', 'POST'])
