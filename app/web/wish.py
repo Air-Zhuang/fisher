@@ -36,9 +36,13 @@ def save_to_wish(isbn):
 
 @web.route('/satisfy/wish/<int:wid>')
 def satisfy_wish(wid):
-    pass
+    return 'satisfy_wish'
 
 
 @web.route('/wish/book/<isbn>/redraw')
-def redraw_from_wish(isbn):
-    pass
+@login_required
+def redraw_from_wish(isbn): #撤销心愿
+    wish = Wish.query.filter_by(isbn=isbn, launched=False).first_or_404()
+    with db.auto_commit():
+        wish.delete()
+    return redirect(url_for('web.my_wish'))

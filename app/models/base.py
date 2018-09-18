@@ -44,3 +44,6 @@ class Base(db.Model):
             return datetime.fromtimestamp(self.create_time)
         else:
             return None
+
+    def delete(self):       #既然实现了软删除，删除方法也要写一下
+        self.status=0
