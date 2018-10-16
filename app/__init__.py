@@ -18,8 +18,8 @@ def create_app():
 
     mail.init_app(app)                              #注册flask_mail插件
 
-    db.init_app(app)
-    db.create_all(app=app)
+    db.init_app(app)                                #注册flask-SQLAlchemy插件
+    db.create_all(app=app)                          #创建表
     return app
 
 def register_blueprint(app):
