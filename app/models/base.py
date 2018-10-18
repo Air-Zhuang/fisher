@@ -26,7 +26,7 @@ db=SQLAlchemy(query_class=Query)      #实例化SQLAlchemy，如果没有自定�
 
 
 class Base(db.Model):
-    __abstract__=True                                       #不这么写SQLAlchemy会报找不到主键错误
+    __abstract__=True                                       #告诉SQLAlchemy不需要创建这张表。不这么写SQLAlchemy会报找不到主键错误
     create_time=Column('create_time',Integer)               #不能在这里对create_time设置默认值，因为这里是类变量，每一次生成数据表实例这个值是不会变的
     status=Column(SmallInteger,default=1)
 

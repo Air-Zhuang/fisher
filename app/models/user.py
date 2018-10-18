@@ -15,7 +15,7 @@ from app.models.wish import Wish
 
 from math import floor
 
-class User(UserMixin,Base):
+class User(UserMixin,Base):         #UserMixin中包括flask-login使用所需要配置的一系列函数，这里继承了之后就不需要复制过来了，包括get_id也不需要，因为默认取的就是id字段
     id = Column(Integer, primary_key=True)
     nickname = Column(String(24), nullable=False)
     phone_number = Column(String(18), unique=True)
@@ -80,5 +80,5 @@ class User(UserMixin,Base):
         return self.id
 
 @login_manager.user_loader   #使之后每次调用时候的current_user变成一个用户模型
-def get_user(uid):
-    return User.query.get(int(uid))    #主键查新不需要用filter_by
+def get_user(uid):          #使用login-required装饰器必须要配置的一个函数
+    return User.query.get(int(uid))    #这里定义了current_user这个变量中储存的是什么信息。主键查新不需要用filter_by

@@ -14,7 +14,7 @@ def create_app():
 
     login_manager.init_app(app)                     #初始化LoginManager
     login_manager.login_view='web.login'            #指定cookie不通过时重定向的页面
-    login_manager.login_message='请先登录或注册'     #不通过验证重定向之后闪现的消息
+    login_manager.login_message='请先登录或注册'     #未登录状态重定向到login界面之后flask-login会默认闪现一条消息消息
 
     mail.init_app(app)                              #注册flask_mail插件
 

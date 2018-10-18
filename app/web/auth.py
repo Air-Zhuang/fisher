@@ -27,7 +27,7 @@ def login():
         user=User.query.filter_by(email=form.email.data).first()
         if user and user.check_password(form.password.data):
             # 五步：1、init文件初始化flask_login 2、model层绑定属性和装饰器 3、这里写cookie 4、在需要验证登录的控制器上加@login_required装饰器 5、从current_user中提取用户信息
-            login_user(user,remember=True)              # 将这个字段写入到cookie
+            login_user(user,remember=True)              # 将这个数据库查询对象写入到cookie
             next=request.args.get('next')               #这四行实现了如果cookie失效被flask_login重定向到主页之后再登录能够返回到重定向之前的页面
             print(next)
             if not next or not next.startswith('/'):    #or not next.startswith('/')实现的防止重定向攻击的功能
